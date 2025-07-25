@@ -33,7 +33,7 @@ const About = () => {
   const faculty = [
     {
       name: "Dr Selvani Deepthi Kavila",
-      designation: "Head of Department, Professor",
+      designation: "Head of The Department, Professor",
       department: "Computer Science & Engineering(AI & ML)",
       image:HODImage,
       experience: "19+ years",
@@ -171,7 +171,7 @@ const About = () => {
               About <span className="gradient-text">AlgoVerse</span>
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-              A project developed by passionate students at Anil Neerukonds Institute of Technology and Sciences, 
+              A project developed by passionate students at Anil Neerukonda Institute of Technology and Sciences, 
               dedicated to making algorithms and data structures accessible to everyone.
             </p>
             
@@ -180,11 +180,12 @@ const About = () => {
               <CardContent className="p-8">
                 <div className="flex items-center justify-center gap-4 mb-6">
                   <div className="feature-icon">
-                        <img
-                            src="https://ik.imagekit.io/1aqvo9gfn/logo_header1.png?updatedAt=1753421220020"
-                            alt="Graduation cap"
-                            className="w-8 h-8"
-                          />
+<img
+  src="https://ik.imagekit.io/1aqvo9gfn/logo_header1.png?updatedAt=1753421220020"
+  alt="Graduation cap"
+  className="w-12 h-12"
+/>
+
 
                   </div>
                   <div>
