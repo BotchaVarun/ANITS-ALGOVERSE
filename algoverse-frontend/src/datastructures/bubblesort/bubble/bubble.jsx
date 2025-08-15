@@ -1,186 +1,302 @@
+// BubbleSortVisualizer.jsx
 import React, {
   useEffect,
   useState,
   useRef,
   forwardRef,
   useImperativeHandle,
-} from 'react';
-import './bubble.css';
+} from "react";
+import "./bubble.css";
 
-const BubbleSortVisualizer = forwardRef(({
-  userInput = '',
-  isPlaying,
-  playbackSpeed,
-  onPlayingChange,
-  onAnimationComplete,
-  className = '',
-}, ref) => {
-  const [array, setArray] = useState([]);
-  const [highlight, setHighlight] = useState([]);
-  const [sortedIndex, setSortedIndex] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [currentStepData, setCurrentStepData] = useState(null);
+const BubbleSortVisualizer = forwardRef(
+  (
+    {
+      userInput = "",
+      isPlaying,
+      playbackSpeed = 1,
+      onPlayingChange = () => {},
+      onAnimationComplete = () => {},
+      className = "",
+    },
+    ref
+  ) => {
+    const [array, setArray] = useState([]);
+    const [label, setLabel] = useState("Initial Array");
+    const [highlight, setHighlight] = useState([]);
+    const [activePass, setActivePass] = useState(null);
+    const [previousPass, setPreviousPass] = useState(null);
 
-  const originalArrayRef = useRef([]);
-  const stepRef = useRef({ i: 0, j: 0, swapped: false });
-  const intervalRef = useRef(null);
+    const arrayRef = useRef([]);
+    const iRef = useRef(0);
+    const jRef = useRef(0);
+    const swappedRef = useRef(false);
+    const tickingRef = useRef(false);
+    const timersRef = useRef([]);
+    const keyRef = useRef(0);
 
-  const resetState = () => {
-    clearInterval(intervalRef.current);
-    stepRef.current = { i: 0, j: 0, swapped: false };
-    setArray([...originalArrayRef.current]);
-    setHighlight([]);
-    setSortedIndex([]);
-    setCurrentStep(0);
-    setCurrentStepData(null);
-    onPlayingChange(false);
-  };
+    useEffect(() => {
+      arrayRef.current = array;
+    }, [array]);
 
-  useImperativeHandle(ref, () => ({
-    reset: resetState,
-  }));
-
-  const initializeArray = () => {
-    const values = userInput
-      ? userInput.split(',').map(v => parseInt(v.trim(), 10)).filter(v => !isNaN(v)).slice(0, 7)
-      : Array.from({ length: 7  }, () => Math.floor(Math.random() * 100));
-    originalArrayRef.current = [...values];
-    setArray([...values]);
-    setHighlight([]);
-    setSortedIndex([]);
-    stepRef.current = { i: 0, j: 0, swapped: false };
-    setCurrentStep(0);
-    setCurrentStepData(null);
-    onPlayingChange(false);
-  };
-
-  useEffect(() => {
-    initializeArray();
-  }, []);
-
-  useEffect(() => {
-    if (userInput) initializeArray();
-  }, [userInput]);
-
-useEffect(() => {
-  if (!isPlaying || array.length === 0) return;
-
-  let { i, j, swapped } = stepRef.current;
-  let arr = [...array];
-
-  intervalRef.current = setInterval(() => {
-    const n = arr.length;
-
-    if (i >= n - 1) {
-      setSortedIndex([...Array(n).keys()]);
-      setHighlight([]);
-      clearInterval(intervalRef.current);
-      onPlayingChange(false);
-      onAnimationComplete();
-
-      window.getCurrentStepData = () => ({
-        step: { codeLineIndex: 6, action: 'done' },
-        variables: {},
-      });
-      return;
-    }
-
-    const currentVal = arr[j];
-    const nextVal = arr[j + 1];
-    const isSwap = currentVal > nextVal;
-
-    const stepData = {
-      codeLineIndex: isSwap ? 3 : 2,
-      action: isSwap ? 'swap' : 'compare',
-      variables: {
-        i,
-        j,
-        [`arr[${j}]`]: currentVal,
-        [`arr[${j + 1}]`]: nextVal,
-      },
+    const clearAllTimers = () => {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
     };
 
-    // Highlight values
-    setHighlight([j, j + 1]);
+    const getInitialValues = (input) => {
+      const values = input
+        ? input
+            .split(",")
+            .map((v) => parseInt(v.trim(), 10))
+            .filter((v) => !isNaN(v))
+            .slice(0, 7)
+        : Array.from({ length: 7 }, () => Math.floor(Math.random() * 100));
+      return values;
+    };
 
-    // Update step globally for pseudocode
-    window.getCurrentStepData = () => ({
-      step: stepData,
-      variables: stepData.variables,
-    });
+    const initializeArray = () => {
+      clearAllTimers();
+      const values = getInitialValues(userInput);
+      arrayRef.current = values;
+      iRef.current = 0;
+      jRef.current = 0;
+      swappedRef.current = false;
+      tickingRef.current = false;
+      setHighlight([]);
+      setArray(values);
+      setLabel("Initial Array");
+      setPreviousPass(null);
+      setActivePass({ key: keyRef.current++, label: "Initial Array", array: values });
+      onPlayingChange(false);
 
-    // Perform swap
-    if (isSwap) {
-      [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
-      swapped = true;
-    }
+      sendStepData("function_start", 0);
+    };
 
-    setArray([...arr]);
+    const resetState = () => {
+      initializeArray();
+    };
 
-    // End of pass
-    if (j === arr.length - i - 2) {
-      if (!swapped) {
-        setSortedIndex([...Array(n).keys()]);
-        setHighlight([]);
-        clearInterval(intervalRef.current);
+    useImperativeHandle(ref, () => ({
+      reset: resetState,
+    }));
+
+    useEffect(() => {
+      initializeArray();
+    }, []);
+
+    useEffect(() => {
+      if (userInput) initializeArray();
+    }, [userInput]);
+
+    /** 🔹 Send step data to pseudocode panel */
+    const sendStepData = (action, codeLineIndex) => {
+      window.getCurrentStepData = () => ({
+        variables: {
+          i: iRef.current,
+          j: jRef.current,
+          "arr[j]": arrayRef.current[jRef.current],
+          "arr[j+1]": arrayRef.current[jRef.current + 1],
+          n: arrayRef.current.length,
+        },
+        step: {
+          action,
+          codeLineIndex,
+        },
+      });
+    };
+
+    const stepBubble = () => {
+      if (tickingRef.current) return;
+      tickingRef.current = true;
+
+      const speedUnit = Math.max(0.1, Number(playbackSpeed));
+      const T_COMPARE = 350 / speedUnit;
+      const T_SWAP = 350 / speedUnit;
+      const T_SETTLE = 220 / speedUnit;
+      const T_PASS_TRANSITION = 600 / speedUnit;
+
+      const arr = [...arrayRef.current];
+      const n = arr.length;
+      let i = iRef.current;
+      let j = jRef.current;
+      let swapped = swappedRef.current;
+
+      if (i >= n - 1) {
+        setLabel("Sorted");
+        swapInNewPassContainer("Sorted", arr, T_PASS_TRANSITION);
         onPlayingChange(false);
+        tickingRef.current = false;
         onAnimationComplete();
+        sendStepData("sorted_done", -1);
         return;
       }
-      setSortedIndex(prev => [...prev, n - i]);
-      i++;
-      j = 0;
-      swapped = false;
-    } else {
-      j++;
-    }
 
-    stepRef.current = { i, j, swapped };
-  }, 1000 / playbackSpeed);
+      if (j >= n - i - 1) {
+        const nextLabel = swapped ? `Pass ${i + 1}` : "Sorted";
+        setLabel(nextLabel);
+        swapInNewPassContainer(nextLabel, arr, T_PASS_TRANSITION, () => {
+          if (!swapped) {
+            onPlayingChange(false);
+            onAnimationComplete();
+            tickingRef.current = false;
+            sendStepData("sorted_done", -1);
+            return;
+          }
+          iRef.current = i + 1;
+          jRef.current = 0;
+          swappedRef.current = false;
+          tickingRef.current = false;
+          if (isPlaying) scheduleNextStep(0);
+        });
+        return;
+      }
 
-  return () => clearInterval(intervalRef.current);
-}, [isPlaying, playbackSpeed, array]);
+      // --- Step 1: Compare ---
+      setHighlight([j, j + 1, "compare"]);
+      sendStepData("compare", 2); // line 4 pseudocode
 
+      const t1 = setTimeout(() => {
+        if (arr[j] > arr[j + 1]) {
+          // --- Step 2: Swap ---
+          setHighlight([j, j + 1, "swap"]);
+          sendStepData("swap", 3); // line 5 pseudocode
+          const t2 = setTimeout(() => {
+            const newArr = [...arrayRef.current];
+            [newArr[j], newArr[j + 1]] = [newArr[j + 1], newArr[j]];
+            swappedRef.current = true;
+            arrayRef.current = newArr;
+            setArray(newArr);
+            setActivePass((prev) => (prev ? { ...prev, array: newArr } : prev));
 
+            const t3 = setTimeout(() => {
+              setHighlight([]);
+              jRef.current = j + 1;
+              tickingRef.current = false;
+              if (isPlaying) scheduleNextStep(0);
+            }, T_SETTLE);
+            timersRef.current.push(t3);
+          }, T_SWAP);
+          timersRef.current.push(t2);
+        } else {
+          // --- No Swap ---
+          const tNoSwap = setTimeout(() => {
+            setHighlight([]);
+            jRef.current = j + 1;
+            tickingRef.current = false;
+            if (isPlaying) scheduleNextStep(0);
+          }, T_SETTLE);
+          timersRef.current.push(tNoSwap);
+        }
+      }, T_COMPARE);
+      timersRef.current.push(t1);
+    };
 
-  return (
-    <>
-            {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mb-4 p-3 bg-gray-800/40 mx-4 rounded-lg">
+    const scheduleNextStep = (delay = 0) => {
+      const t = setTimeout(() => {
+        stepBubble();
+      }, delay);
+      timersRef.current.push(t);
+    };
 
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span className="text-xs text-gray-300">Comparing</span>
+    useEffect(() => {
+      if (isPlaying) {
+        onPlayingChange(true);
+        if (!tickingRef.current) scheduleNextStep(0);
+      }
+    }, [isPlaying, playbackSpeed]);
+
+    const swapInNewPassContainer = (newLabel, arrSnapshot, transitionMs, after = () => {}) => {
+      setPreviousPass(activePass);
+      const incoming = {
+        key: keyRef.current++,
+        label: newLabel,
+        array: [...arrSnapshot],
+        incoming: true,
+      };
+      setActivePass(incoming);
+
+      const t = setTimeout(() => {
+        setPreviousPass(null);
+        setActivePass((curr) =>
+          curr ? { ...curr, incoming: false } : curr
+        );
+        after();
+      }, transitionMs);
+      timersRef.current.push(t);
+    };
+useEffect(() => {
+  if (!isPlaying) {
+    clearAllTimers();
+    tickingRef.current = false;
+  }
+}, [isPlaying]);
+
+    return (
+      <div className={`visualizer-wrapper ${className}`}>
+        {/* Legend */}
+        <div className="legend">
+          <div className="legend-item">
+            <div className="dot compare" />
+            <span>Comparing</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span className="text-xs text-gray-300">Sorted</span>
+          <div className="legend-item">
+            <div className="dot swap" />
+            <span>Swap</span>
           </div>
         </div>
-    <div className={`visualizer mt-12 ${className}`}>
-      <div className="array-container">
-        {array.map((value, index) => (
-          <div className="array-element" key={index}>
-            <div
-              className={`element-value ${
-                sortedIndex.includes(index)
-                  ? 'sorted'
-                  : highlight[0] === index
-                  ? 'highlight-start'
-                  : highlight[1] === index
-                  ? 'highlight-end'
-                  : ''
-              }`}
-            >
-              {value}
+
+        {/* Pass containers */}
+        <div className="pass-stage">
+          {previousPass && (
+            <div className="pass-container outgoing" key={`prev-${previousPass.key}`}>
+              <div className="pass-label">{previousPass.label}</div>
+              <div className="array-row">
+                {previousPass.array.map((v, idx) => (
+                  <div className="array-block" key={idx}>
+                    {v}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="element-index">{index}</div>
-          </div>
-        ))}
+          )}
+
+          {activePass && (
+            <div
+              className={`pass-container ${activePass.incoming ? "incoming" : "centered"}`}
+              key={`active-${activePass.key}`}
+            >
+              <div className="pass-label">{activePass.label}</div>
+              <div className="array-row">
+                {activePass.array.map((v, idx) => {
+                  const isCurrent = !activePass.incoming && !previousPass;
+                  const isComparing =
+                    isCurrent && (highlight[0] === idx || highlight[1] === idx);
+                  const phase = isComparing ? highlight[2] : null;
+
+                  return (
+                    <div
+                      key={idx}
+                      className={`array-block ${
+                        phase === "swap"
+                          ? "swap"
+                          : phase === "compare"
+                          ? "compare"
+                          : ""
+                      }`}
+                    >
+                      {v}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        
       </div>
-    </div>
-    </>
-  );
-});
+    );
+  }
+);
 
 export default BubbleSortVisualizer;
