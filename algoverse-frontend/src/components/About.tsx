@@ -190,7 +190,7 @@ const About = () => {
                   </div>
                   <div>
                     <h2 className="text-3xl font-bold gradient-text">ANITS</h2>
-                    <p className="text-lg text-muted-foreground">Anil Neerukonds Institute of Technology and Sciences</p>
+                    <p className="text-lg text-muted-foreground">Anil Neerukonda Institute of Technology and Sciences</p>
                   </div>
                 </div>
                 <p className="text-muted-foreground text-lg leading-relaxed">
