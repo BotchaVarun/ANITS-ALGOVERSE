@@ -18,19 +18,31 @@ const InsertionSortVisualizer = forwardRef(({
   const [array, setArray] = useState([]);
   const [highlight, setHighlight] = useState([]);
   const [sortedIndex, setSortedIndex] = useState([]);
-  const [currentStepData, setCurrentStepData] = useState(null);
+  const [currentPass, setCurrentPass] = useState('');
+  const [heldKey, setHeldKey] = useState(null);
+  const [holeIndex, setHoleIndex] = useState(null);
 
   const originalArrayRef = useRef([]);
   const stepRef = useRef({ i: 1, j: 0, key: null, phase: 'start' });
   const intervalRef = useRef(null);
+
+  // 🔑 helper to send data to PseudoCodePanel
+  const pushStepData = (codeLineIndex, action, vars = {}) => {
+    window.getCurrentStepData = () => ({
+      step: { codeLineIndex, action },
+      variables: vars,
+    });
+  };
 
   const resetState = () => {
     clearInterval(intervalRef.current);
     stepRef.current = { i: 1, j: 0, key: null, phase: 'start' };
     setArray([...originalArrayRef.current]);
     setHighlight([]);
-    setSortedIndex([]);
-    setCurrentStepData(null);
+    setSortedIndex([0]);
+    setHeldKey(null);
+    setHoleIndex(null);
+    setCurrentPass('Initial Array');
     onPlayingChange(false);
   };
 
@@ -39,16 +51,31 @@ const InsertionSortVisualizer = forwardRef(({
   }));
 
   const initializeArray = () => {
-    const values = userInput
-      ? userInput.split(',').map(v => parseInt(v.trim(), 10)).filter(v => !isNaN(v)).slice(0, 7)
-      : Array.from({ length: 7 }, () => Math.floor(Math.random() * 100));
+    let values;
+    if (userInput) {
+      values = userInput
+        .split(',')
+        .map(v => parseInt(v.trim(), 10))
+        .filter(v => !isNaN(v))
+        .slice(0, 7);
+    } else {
+      // generate random array of length 5–7
+      const len = Math.floor(Math.random() * 3) + 5;
+      values = Array.from({ length: len }, () => Math.floor(Math.random() * 100));
+    }
+
     originalArrayRef.current = [...values];
     setArray([...values]);
     setHighlight([]);
-    setSortedIndex([]);
+    setSortedIndex([0]);
     stepRef.current = { i: 1, j: 0, key: null, phase: 'start' };
-    setCurrentStepData(null);
+    setHeldKey(null);
+    setHoleIndex(null);
+    setCurrentPass('Initial Array');
     onPlayingChange(false);
+
+    // push initial step
+    pushStepData(1, 'function_start', { arr: `[${values}]` });
   };
 
   useEffect(() => {
@@ -56,138 +83,118 @@ const InsertionSortVisualizer = forwardRef(({
   }, []);
 
   useEffect(() => {
-    if (userInput && !isPlaying) {
-      initializeArray();
-    }
-  }, [userInput, isPlaying]);
+    if (userInput) initializeArray();
+  }, [userInput]);
 
-useEffect(() => {
-  if (!isPlaying || array.length === 0) return;
+  useEffect(() => {
+    if (!isPlaying || array.length === 0) return;
 
-  let arr = [...array];
-  let { i, j, key, phase } = stepRef.current;
+    let arr = [...array];
+    let { i, j, key, phase } = stepRef.current;
 
-  const emitStepData = (line, action) => {
-    const vars = {
-      i, j, key,
-      [`arr[${j}]`]: arr[j],
-      [`arr[${j + 1}]`]: arr[j + 1],
-      [`arr[${i}]`]: arr[i],
-    };
-    const stepData = {
-      codeLineIndex: line,
-      action,
-      variables: vars,
-    };
-    window.getCurrentStepData = () => ({ step: stepData, variables: vars });
-  };
+    intervalRef.current = setInterval(() => {
+      if (i >= arr.length) {
+        setSortedIndex([...Array(arr.length).keys()]);
+        setHighlight([]);
+        setHeldKey(null);
+        setHoleIndex(null);
+        setCurrentPass('Array Sorted!');
+        clearInterval(intervalRef.current);
+        onPlayingChange(false);
+        onAnimationComplete();
 
-  intervalRef.current = setInterval(() => {
-    if (i >= arr.length) {
-      setSortedIndex([...Array(arr.length).keys()]);
-      setHighlight([]);
-      clearInterval(intervalRef.current);
-      onPlayingChange(false);
-      onAnimationComplete();
-      window.getCurrentStepData = () => ({
-        step: { codeLineIndex: 11, action: 'done' },
-        variables: {},
-      });
-      return;
-    }
+        pushStepData(12, 'function_end', { arr: `[${arr}]` });
+        return;
+      }
 
-if (phase === 'start') {
-  key = arr[i];
-  j = i - 1;
-  setHighlight([i]);
-  emitStepData(3, 'init_key');
-  phase = 'compare';
+      if (phase === 'start') {
+        key = arr[i];
+        j = i - 1;
+        setHeldKey(key);
+        setHoleIndex(i);
+        setCurrentPass(`Pass ${i}: Insert ${key}`);
+        phase = 'compare';
 
-} else if (phase === 'compare') {
-  emitStepData(5, 'compare');
-  if (j >= 0 && arr[j] > key) {
-    phase = 'shift';
-  } else {
-    phase = 'end_while';
-  }
+        pushStepData(4, 'init_key', { i, j, key, arr: `[${arr}]` });
 
-} else if (phase === 'shift') {
-  // Just shift, no swap!
-  const temp=arr[j+1];
-  arr[j + 1] = arr[j]; 
-  arr[j]=temp;
-  setArray([...arr]);
-  setHighlight([j + 1, j]);
-  emitStepData(6, 'shift');
-  phase = 'decrement_j';
+      } else if (phase === 'compare') {
+        if (j >= 0 && arr[j] > key) {
+          setHighlight([j]);
+          phase = 'shift';
 
-} else if (phase === 'decrement_j') {
-  j--;
-  emitStepData(7, 'decrement_j');
-  phase = 'compare';
+          pushStepData(6, 'compare', { i, j, key, arr: `[${arr}]` });
+        } else {
+          phase = 'insert';
 
-} else if (phase === 'end_while') {
-  emitStepData(8, 'end_while');
-  phase = 'insert';
+          pushStepData(9, 'end_while', { i, j, key, arr: `[${arr}]` });
+        }
 
-} else if (phase === 'insert') {
-  arr[j + 1] = key;
-  setArray([...arr]);
-  setHighlight([j + 1]);
-  setSortedIndex(prev => [...new Set([...prev, i])]);
-  emitStepData(9, 'insert');
-  i++;
-  phase = 'start';
-}
+      } else if (phase === 'shift') {
+        arr[j + 1] = arr[j];
+        setArray([...arr]);
+        setHoleIndex(j);
+        j--;
+        phase = 'compare';
 
+        pushStepData(7, 'shift', { i, j, key, arr: `[${arr}]` });
 
-    stepRef.current = { i, j, key, phase };
-  }, 1000 / playbackSpeed);
+      } else if (phase === 'insert') {
+        arr[j + 1] = key;
+        setArray([...arr]);
+        setHighlight([]);
+        setHeldKey(null);
+        setHoleIndex(null);
+        setSortedIndex(prev => [...new Set([...prev, i])]);
+        i++;
+        phase = 'start';
 
-  return () => clearInterval(intervalRef.current);
-}, [isPlaying, playbackSpeed, array]);
+        pushStepData(10, 'insert', { i, j, key, arr: `[${arr}]` });
+      }
 
+      stepRef.current = { i, j, key, phase };
+    }, 1000 / playbackSpeed);
+
+    return () => clearInterval(intervalRef.current);
+  }, [isPlaying, playbackSpeed, array]);
 
   return (
-    <>
-            {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mb-4 p-3 bg-gray-800/40 mx-4 rounded-lg">
+    <div className={`visualizer mt-12 ${className}`}>
+      <div className="text-center text-lg font-semibold text-white mb-6">
+        {currentPass}
+      </div>
 
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span className="text-xs text-gray-300">Comparing</span>
-          </div>
+      <div className="array-container flex justify-center gap-4">
+        {array.map((value, index) => {
+          const isSorted = sortedIndex.includes(index);
+          const isCompared = highlight.includes(index);
+          const isHole = holeIndex === index;
 
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span className="text-xs text-gray-300">Sorted</span>
+          return (
+            <div className="array-element relative" key={index}>
+              <div
+                className={`element-value transition-all duration-500 ease-in-out
+                  ${isHole ? 'bg-transparent border-2 border-dashed border-gray-400' : ''}
+                  ${isSorted && !isHole ? 'bg-blue-500 text-white' : ''}
+                  ${!isSorted && !isHole ? 'bg-gray-600 text-white' : ''}
+                  ${isCompared ? 'ring-4 ring-orange-400' : ''}
+                `}
+              >
+                {!isHole ? value : ''}
+              </div>
+              <div className="element-index text-gray-300 text-xs mt-2">{index}</div>
+            </div>
+          );
+        })}
+      </div>
+
+      {heldKey !== null && holeIndex !== null && (
+        <div className="flex justify-center mt-6">
+          <div className="element-value bg-yellow-400 text-black shadow-lg px-4 py-2 rounded-md">
+            {heldKey}
           </div>
         </div>
-   <div className={`visualizer mt-12 ${className}`}>
-  <div className="array-container">
-    {array.map((value, index) => {
-      const isAllSorted = sortedIndex.length === array.length;
-      return (
-        <div className="array-element" key={index}>
-          <div
-            className={`element-value ${
-              isAllSorted
-                ? 'sorted' // Only apply 'sorted' if the entire array is sorted
-                : highlight.includes(index)
-                ? 'highlight'
-                : ''
-            }`}
-          >
-            {value}
-          </div>
-          <div className="element-index">{index}</div>
-        </div>
-      );
-    })}
- 
-  </div>
-</div>
-</>
+      )}
+    </div>
   );
 });
 

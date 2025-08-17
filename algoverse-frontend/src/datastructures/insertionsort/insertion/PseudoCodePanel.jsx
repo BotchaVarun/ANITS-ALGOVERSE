@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 const insertionSortCode = [
-  { lineNumber: 1, code: "void sort(int arr[]) {", action: "function_start" },
-  { lineNumber: 2, code: "  int n = arr.length;", action: "init_length" },
+  { lineNumber: 1, code: "void sort(int array[]) {", action: "function_start" },
+  { lineNumber: 2, code: "  int n = array.length;", action: "init_length" },
   { lineNumber: 3, code: "  for (int i = 1; i < n; ++i) {", action: "outer_loop" },
-  { lineNumber: 4, code: "    int key = arr[i];", action: "init_key" },
+  { lineNumber: 4, code: "    int key = array[i];", action: "init_key" },
   { lineNumber: 5, code: "    int j = i - 1;", action: "init_j" },
-  { lineNumber: 6, code: "    while (j >= 0 && arr[j] > key) {", action: "compare" },
-  { lineNumber: 7, code: "      arr[j + 1] = arr[j];", action: "shift" },
+  { lineNumber: 6, code: "    while (j >= 0 && array[j] > key) {", action: "compare" },
+  { lineNumber: 7, code: "      array[j + 1] = array[j];", action: "shift" },
   { lineNumber: 8, code: "      j = j - 1;", action: "decrement_j" },
   { lineNumber: 9, code: "    }", action: "end_while" },
-  { lineNumber: 10, code: "    arr[j + 1] = key;", action: "insert" },
+  { lineNumber: 10, code: "    array[j + 1] = key;", action: "insert" },
   { lineNumber: 11, code: "  }", action: "end_outer_loop" },
   { lineNumber: 12, code: "}", action: "function_end" }
 ];
