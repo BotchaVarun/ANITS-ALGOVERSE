@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { HuffmanVisualizer } from '../Huffmancoding/Huffman/HuffmanVisualizer';
 import { 
   ChevronLeft,
   User,
@@ -40,7 +41,7 @@ const Huffman = () => {
     { id: 8, title: 'Try Out Challenges', icon: Trophy, component: 'ChallengesSection' }
   ];
 
-  const progressPercentage = Math.round((completedSteps.length / steps.length) * 100);
+  const progressPercentage = Math.round((completedSteps.length / (steps.length-1)) * 100);
 
   const markAsComplete = () => {
     if (!completedSteps.includes(currentStep)) {
@@ -78,7 +79,7 @@ const Huffman = () => {
       case 'SpaceComplexitySection':
         return <SpaceComplexitySection />;
       case 'SimulationSection':
-        return <SimulationSection onComplete={() => markAsComplete()} />;
+        return <SimulationSection/>;
       case 'ChallengesSection':
         return <ChallengesSection onComplete={() => markAsComplete()} />;
       default:
@@ -221,18 +222,7 @@ const Huffman = () => {
           {/* Mobile-Optimized Fixed Action Buttons */}
           <div className="fixed bottom-4 right-4 z-40 flex flex-col gap-2 sm:gap-3">
             {/* Fullscreen Toggle Button */}
-            <Button 
-              onClick={toggleFullscreen}
-              variant="secondary"
-              size="icon"
-              className="h-10 w-10 sm:h-12 sm:w-12 shadow-xl bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-primary/20 hover:bg-primary/10"
-            >
-              {isFullscreen ? (
-                <Minimize className="w-4 h-4 sm:w-5 sm:h-5" />
-              ) : (
-                <Maximize className="w-4 h-4 sm:w-5 sm:h-5" />
-              )}
-            </Button>
+
             
             {/* Mark as Complete Button */}
             {currentStep < 7 && (
@@ -536,23 +526,13 @@ const SpaceComplexitySection = () => (
   </Card>
 );
 
-const SimulationSection = ({ onComplete }: { onComplete: () => void }) => (
-  <Card className="h-full algo-card">
-    <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">Interactive Simulation</h1>
-      <div className="glass-card p-8 sm:p-12 rounded-2xl text-center flex-1 flex flex-col items-center justify-center min-h-[400px] border border-primary/20">
-        <div className="feature-icon mx-auto mb-6">
-          <Target className="w-12 h-12 sm:w-16 sm:h-16" />
-        </div>
-        <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-md leading-relaxed">
-          Interactive simulation component would be implemented here with step-by-step visualization
-        </p>
-        <Button onClick={onComplete} className="cta-button">
-          Complete Simulation
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
+const SimulationSection = () => (
+
+   
+       <HuffmanVisualizer />
+
+
+  
 );
 
 const ChallengesSection = ({ onComplete }: { onComplete: () => void }) => (

@@ -1,16 +1,33 @@
 import React from 'react';
 import { Slider } from '@/components/ui/slider';
 
-const PlaybackSpeed = ({ value, onChange }) => {
+const PlaybackSpeed = ({ value, onChange, onPassDelayChange }) => {
   const speedOptions = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
-  const handleSliderChange = (values) => {
-    const newValue = values[0];
-    const closestSpeed = speedOptions.reduce((prev, curr) =>
-      Math.abs(curr - newValue) < Math.abs(prev - newValue) ? curr : prev
-    );
-    onChange(closestSpeed);
-  };
+  // 🔹 Map playback speed → pass delay
+const passDelayMap = {
+  0.5: 6000,   // very slow → 6s
+  0.75: 5000,  // slow → 5s
+  1: 4000,     // normal → 4s
+  1.25: 3000,  // slightly fast → 3s
+  1.5: 2000,   // faster → 2s
+  2: 1500,     // fastest → 1.5s
+};
+
+
+const handleSliderChange = (values) => {
+  const newValue = values[0];
+  const closestSpeed = speedOptions.reduce((prev, curr) =>
+    Math.abs(curr - newValue) < Math.abs(prev - newValue) ? curr : prev
+  );
+  onChange(closestSpeed);
+
+  // 🔹 Update passDelay with new longer mapping
+  if (onPassDelayChange) {
+    onPassDelayChange(passDelayMap[closestSpeed] || 4000);
+  }
+};
+
 
   return (
     <div className="flex items-center gap-4">

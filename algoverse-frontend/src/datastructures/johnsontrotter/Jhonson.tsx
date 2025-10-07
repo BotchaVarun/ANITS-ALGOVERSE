@@ -4,6 +4,114 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { JohnsonTrotterAlgorithm } from '@/lib/johnsonTrotter';
+import { AlgorithmStep } from '@/types/algorithm';
+import { ControlPanel } from '../johnsontrotter/johnson/ControlPanel';
+import { VisualizationArea } from '../johnsontrotter/johnson/VisualizationArea';
+import { PermutationLog } from '../johnsontrotter/johnson/PermutationLog';
+
+const Index = () => {
+  const [algorithm] = useState(() => new JohnsonTrotterAlgorithm(3));
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [speed, setSpeed] = useState(1);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const steps = algorithm.getSteps();
+  const permutations = algorithm.getPermutations();
+  const currentStep = steps[currentStepIndex];
+  const isComplete = currentStep.state === 'complete';
+
+  // Calculate which permutation we're currently showing
+  const currentPermutationIndex = steps
+    .slice(0, currentStepIndex + 1)
+    .filter(step => step.state === 'idle' || step.state === 'complete')
+    .length - 1;
+
+  useEffect(() => {
+    if (isPlaying && !isComplete) {
+      const delay = 1000 / speed;
+      intervalRef.current = setInterval(() => {
+        setCurrentStepIndex((prev) => {
+          if (prev >= steps.length - 1) {
+            setIsPlaying(false);
+            return prev;
+          }
+          return prev + 1;
+        });
+      }, delay);
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [isPlaying, speed, steps.length, isComplete]);
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleStep = () => {
+    if (currentStepIndex < steps.length - 1) {
+      setCurrentStepIndex(currentStepIndex + 1);
+    }
+  };
+
+  const handleReset = () => {
+    setIsPlaying(false);
+    setCurrentStepIndex(0);
+  };
+
+  const handleSpeedChange = (newSpeed: number) => {
+    setSpeed(newSpeed);
+  };
+
+  return (
+    <div className="min-h-screen bg-background pb-32">
+      {/* Header */}
+      <header className="text-center pt-5">
+        <h1 className="text-8xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-glow mb-4">
+          Johnson-Trotter Algorithm
+        </h1>
+
+      </header>
+
+      {/* Main Stage - Visualization Area with Dynamic Caption */}
+      <VisualizationArea step={currentStep} />
+
+      {/* Permutation Log */}
+      <PermutationLog
+        permutations={permutations}
+        currentPermutationIndex={currentPermutationIndex}
+      />
+
+      {/* Info Footer */}
+      <div className="text-center text-sm text-muted-foreground py-8">
+        <p>
+          Step {currentStepIndex + 1} of {steps.length} • 
+          Total permutations: {permutations.length}
+        </p>
+      </div>
+
+      {/* Control Bar - Fixed at Bottom */}
+      <ControlPanel
+        isPlaying={isPlaying}
+        onPlayPause={handlePlayPause}
+        onStep={handleStep}
+        onReset={handleReset}
+        speed={speed}
+        onSpeedChange={handleSpeedChange}
+        isComplete={isComplete}
+      />
+    </div>
+  );
+};
+
+
+
 import { 
   ChevronLeft,
   User,
@@ -40,7 +148,7 @@ const Jhonson = () => {
     { id: 8, title: 'Try Out Challenges', icon: Trophy, component: 'ChallengesSection' }
   ];
 
-  const progressPercentage = Math.round((completedSteps.length / steps.length) * 100);
+  const progressPercentage = Math.round((completedSteps.length / (steps.length-1)) * 100);
 
   const markAsComplete = () => {
     if (!completedSteps.includes(currentStep)) {
@@ -78,7 +186,7 @@ const Jhonson = () => {
       case 'SpaceComplexitySection':
         return <SpaceComplexitySection />;
       case 'SimulationSection':
-        return <SimulationSection onComplete={() => markAsComplete()} />;
+        return <SimulationSection />;
       case 'ChallengesSection':
         return <ChallengesSection onComplete={() => markAsComplete()} />;
       default:
@@ -535,23 +643,10 @@ const SpaceComplexitySection = () => (
   </Card>
 );
 
-const SimulationSection = ({ onComplete }: { onComplete: () => void }) => (
-  <Card className="h-full algo-card">
-    <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">Interactive Simulation</h1>
-      <div className="glass-card p-8 sm:p-12 rounded-2xl text-center flex-1 flex flex-col items-center justify-center min-h-[400px] border border-primary/20">
-        <div className="feature-icon mx-auto mb-6">
-          <Target className="w-12 h-12 sm:w-16 sm:h-16" />
-        </div>
-        <p className="text-base sm:text-lg text-muted-foreground mb-6 max-w-md leading-relaxed">
-          Interactive simulation component would be implemented here with step-by-step visualization
-        </p>
-        <Button onClick={onComplete} className="cta-button">
-          Complete Simulation
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
+const SimulationSection = () => (
+ 
+    <Index/>
+ 
 );
 
 const ChallengesSection = ({ onComplete }: { onComplete: () => void }) => (
