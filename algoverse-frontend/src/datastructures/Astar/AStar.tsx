@@ -196,16 +196,15 @@ const AStar = () => {
   const steps = [
     { id: 0, title: 'Description', icon: BookOpen, component: 'DescriptionSection' },
     { id: 1, title: 'Pseudocode', icon: Code, component: 'PseudocodeSection' },
-    { id: 2, title: 'Flowchart', icon: GitBranch, component: 'FlowchartSection' },
-    { id: 3, title: 'Advantages', icon: Check, component: 'AdvantagesSection' },
-    { id: 4, title: 'Examples', icon: BookOpen, component: 'ExamplesSection' },
-    { id: 5, title: 'Time Complexity', icon: Clock, component: 'TimeComplexitySection' },
-    { id: 6, title: 'Space Complexity', icon: Database, component: 'SpaceComplexitySection' },
-    { id: 7, title: 'Simulation', icon: Play, component: 'SimulationSection' },
-    { id: 8, title: 'Try Out Challenges', icon: Trophy, component: 'ChallengesSection' }
+    { id: 2, title: 'Advantages', icon: Check, component: 'AdvantagesSection' },
+    { id: 3, title: 'Examples', icon: BookOpen, component: 'ExamplesSection' },
+    { id: 4, title: 'Time Complexity', icon: Clock, component: 'TimeComplexitySection' },
+    { id: 5, title: 'Space Complexity', icon: Database, component: 'SpaceComplexitySection' },
+    { id: 6, title: 'Simulation', icon: Play, component: 'SimulationSection' },
+    { id: 7, title: 'Try Out Challenges', icon: Trophy, component: 'ChallengesSection' }
   ];
 
-  const progressPercentage = Math.round((completedSteps.length / (steps.length-1)) * 100);
+  const progressPercentage = Math.round((completedSteps.length / (steps.length)) * 100);
 
   const markAsComplete = () => {
     if (!completedSteps.includes(currentStep)) {
@@ -232,8 +231,7 @@ const AStar = () => {
         return <DescriptionSection />;
       case 'PseudocodeSection':
         return <PseudocodeSection />;
-      case 'FlowchartSection':
-        return <FlowchartSection />;
+
       case 'AdvantagesSection':
         return <AdvantagesSection />;
       case 'ExamplesSection':
@@ -283,7 +281,7 @@ const AStar = () => {
                   <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
                     <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <span className="text-xs sm:text-sm font-medium">John Doe</span>
+                  <span className="text-xs sm:text-sm font-medium"></span>
                 </div>
               </div>
             </div>
@@ -508,25 +506,7 @@ const PseudocodeSection = () => (
   </Card>
 );
 
-const FlowchartSection = () => (
-  <Card className="h-full algo-card">
-    <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">A Star Flowchart</h1>
-      <div className="flex justify-center items-center flex-1">
-        <div className="glass-card p-8 rounded-2xl w-full h-full flex items-center justify-center min-h-[400px] border border-primary/20">
-          <div className="text-center">
-            <div className="feature-icon mx-auto mb-4">
-              <GitBranch className="w-8 h-8" />
-            </div>
-            <p className="text-center text-muted-foreground text-base sm:text-lg">
-              Flowchart visualization would be implemented here using a drawing library like D3.js or a flowchart component.
-            </p>
-          </div>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+
 
 const AdvantagesSection = () => (
   <Card className="h-full algo-card">

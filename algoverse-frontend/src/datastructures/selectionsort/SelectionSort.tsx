@@ -324,25 +324,67 @@ const PseudocodeSection = () => (
     </CardContent>
   </Card>
 );
+import { ZoomIn, ZoomOut } from "lucide-react";
+const FlowchartSection = () => {
+  const [zoom, setZoom] = useState(1);
 
+  const handleZoomIn = () => {
+    if (zoom < 3) setZoom((prev) => prev + 0.2);
+  };
 
-const FlowchartSection = () => (
-  <Card className="algo-card">
-    <CardContent className="p-4 sm:p-8 flex flex-col">
-      <h1 className="section-title gradient-text">Selection Sort Flowchart</h1>
-      <div className="flex justify-center items-center mt-4">
-        <div className="glass-card p-8 rounded-2xl w-full border border-primary/20">
-          <img
-            src="https://ik.imagekit.io/1aqvo9gfn/Selection%20sort.jpg?updatedAt=1751567779546"
-            alt="Selection Sort Flowchart"
-            className="w-full h-auto object-contain"
-            style={{ maxHeight: "500px" }} // optional cap to prevent it from overflowing huge
-          />
+  const handleZoomOut = () => {
+    if (zoom > 0.5) setZoom((prev) => prev - 0.2);
+  };
+  return (
+    <Card className="algo-card">
+      <CardContent className="p-4 sm:p-8 flex flex-col">
+        <h1 className="section-title gradient-text">Selection Sort Flowchart</h1>
+
+        <div className="flex justify-between items-center mb-4">
+          <p className="text-sm sm:text-base text-muted-foreground">
+            Use the buttons below to zoom in/out and explore the flowchart clearly.
+          </p>
+          <div className="flex gap-3">
+            <button
+              onClick={handleZoomOut}
+              className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+              title="Zoom Out"
+            >
+              <ZoomOut className="w-5 h-5 text-primary" />
+            </button>
+            <button
+              onClick={handleZoomIn}
+              className="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition"
+              title="Zoom In"
+            >
+              <ZoomIn className="w-5 h-5 text-primary" />
+            </button>
+          </div>
         </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+
+        <div className="flex justify-center items-center overflow-auto bg-transparent">
+          <div
+            className="glass-card p-8 rounded-2xl border border-primary/20 transition-transform duration-300 ease-in-out"
+            style={{
+              transform: `scale(${zoom})`,
+              transformOrigin: "center",
+            }}
+          >
+            <img
+              src="https://ik.imagekit.io/1aqvo9gfn/Selection%20sort.jpg?updatedAt=1751567779546"
+              alt="Bubble Sort Flowchart"
+              className="w-full h-auto object-contain"
+              style={{ maxHeight: "500px" }}
+            />
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+};
+
+
 
 const AdvantagesSection = () => (
   <Card className="h-full algo-card">

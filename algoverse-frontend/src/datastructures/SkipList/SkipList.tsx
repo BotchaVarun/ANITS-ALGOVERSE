@@ -118,7 +118,7 @@ const SkipList = () => {
                   <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
                     <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <span className="text-xs sm:text-sm font-medium">John Doe</span>
+                  <span className="text-xs sm:text-sm font-medium"></span>
                 </div>
               </div>
             </div>

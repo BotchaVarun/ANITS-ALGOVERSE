@@ -286,16 +286,15 @@ const MergeSort = () => {
   const steps = [
     { id: 0, title: 'Description', icon: BookOpen, component: 'DescriptionSection' },
     { id: 1, title: 'Pseudocode', icon: Code, component: 'PseudocodeSection' },
-    { id: 2, title: 'Flowchart', icon: GitBranch, component: 'FlowchartSection' },
-    { id: 3, title: 'Advantages', icon: Check, component: 'AdvantagesSection' },
-    { id: 4, title: 'Examples', icon: BookOpen, component: 'ExamplesSection' },
-    { id: 5, title: 'Time Complexity', icon: Clock, component: 'TimeComplexitySection' },
-    { id: 6, title: 'Space Complexity', icon: Database, component: 'SpaceComplexitySection' },
-    { id: 7, title: 'Simulation', icon: Play, component: 'SimulationSection' },
-    { id: 8, title: 'Try Out Challenges', icon: Trophy, component: 'ChallengesSection' }
+    { id: 2, title: 'Advantages', icon: Check, component: 'AdvantagesSection' },
+    { id: 3, title: 'Examples', icon: BookOpen, component: 'ExamplesSection' },
+    { id: 4, title: 'Time Complexity', icon: Clock, component: 'TimeComplexitySection' },
+    { id: 5, title: 'Space Complexity', icon: Database, component: 'SpaceComplexitySection' },
+    { id: 6, title: 'Simulation', icon: Play, component: 'SimulationSection' },
+    { id: 7, title: 'Try Out Challenges', icon: Trophy, component: 'ChallengesSection' }
   ];
 
-  const progressPercentage = Math.round((completedSteps.length / (steps.length-1)) * 100);
+  const progressPercentage = Math.round((completedSteps.length / (steps.length)) * 100);
 
   const markAsComplete = () => {
     if (!completedSteps.includes(currentStep)) {
@@ -321,8 +320,7 @@ const MergeSort = () => {
         return <DescriptionSection />;
       case 'PseudocodeSection':
         return <PseudocodeSection />;
-      case 'FlowchartSection':
-        return <FlowchartSection />;
+
       case 'AdvantagesSection':
         return <AdvantagesSection />;
       case 'ExamplesSection':
@@ -363,7 +361,7 @@ const MergeSort = () => {
                   <ChevronLeft className="w-4 h-4" />
                   <span>Back </span>
                 </Link>
-                <div className="text-sm sm:text-lg font-semibold gradient-text truncate">QuickSort</div>
+                <div className="text-sm sm:text-lg font-semibold gradient-text truncate">Merge Sort</div>
               </div>
               
               <div className="flex items-center gap-2 sm:gap-3">
@@ -372,7 +370,7 @@ const MergeSort = () => {
                   <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center">
                     <User className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
                   </div>
-                  <span className="text-xs sm:text-sm font-medium">John Doe</span>
+                  <span className="text-xs sm:text-sm font-medium">Varun</span>
                 </div>
               </div>
             </div>
@@ -520,35 +518,34 @@ const MergeSort = () => {
 const DescriptionSection = () => (
   <Card className="h-full algo-card">
     <CardContent className="p-4 sm:p-8 h-full">
-      <h1 className="section-title gradient-text">QuickSort Description</h1>
+      <h1 className="section-title gradient-text">Merge Sort Description</h1>
       <div className="prose max-w-none h-full overflow-y-auto">
         <p className="text-base sm:text-lg mb-4 leading-relaxed">
-          QuickSort is a popular, efficient, divide-and-conquer sorting algorithm.
-          It works by selecting a 'pivot' element from the array and partitioning the other elements
-          into two sub-arrays, according to whether they are less than or greater than the pivot.
-          The sub-arrays are then sorted recursively.
+          Merge Sort is an efficient, stable, divide-and-conquer sorting algorithm.
+          It works by recursively dividing the array into two halves until each sub-array contains a single element,
+          then merging those sub-arrays in a sorted manner to produce the final sorted array.
         </p>
         <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary">How it Works:</h3>
         <ul className="space-y-3 mb-6">
           <li className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span>Choose a pivot element from the array</span>
+            <span>Divide the unsorted array into two halves recursively until each sub-array has one element</span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span>Partition the array so elements less than pivot come before it, greater come after</span>
+            <span>Merge the sub-arrays by comparing elements from each half and placing them in sorted order</span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span>Recursively apply the above steps to sub-arrays on left and right of pivot</span>
+            <span>Continue merging until all sub-arrays are combined into one sorted array</span>
           </li>
           <li className="flex items-start gap-3">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span>Combine the sorted sub-arrays and the pivot to get the sorted array</span>
+            <span>The algorithm guarantees O(n log n) time complexity in all cases</span>
           </li>
         </ul>
         <p className="leading-relaxed">
-          QuickSort is efficient for large datasets and commonly used due to its average-case time complexity of O(n log n).
+          Merge Sort is particularly useful for sorting linked lists and large datasets, and is stable (maintains relative order of equal elements). It's widely used in external sorting where data doesn't fit into memory.
         </p>
       </div>
     </CardContent>
@@ -556,27 +553,42 @@ const DescriptionSection = () => (
 );
 
 const PseudocodeSection = () => (
-  <Card className="h-full algo-card">
-    <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">QuickSort Pseudocode</h1>
-      <Card className="bg-gray-900 text-green-400 flex-1 border border-primary/20">
-        <CardContent className="p-4 sm:p-6 font-mono h-full overflow-y-auto">
-          <pre className="whitespace-pre-wrap text-sm sm:text-base">
-{`function QuickSort(array, low, high):
-    if low < high:
-        pivotIndex = Partition(array, low, high)
-        QuickSort(array, low, pivotIndex - 1)
-        QuickSort(array, pivotIndex + 1, high)
+  <Card className="h-full algo-card overflow-hidden">
+    <CardContent className="p-4 sm:p-8 h-full flex flex-col overflow-hidden">
+      <h1 className="section-title gradient-text">Merge Sort Pseudocode</h1>
 
-function Partition(array, low, high):
-    pivot = array[high]
-    i = low - 1
-    for j from low to high - 1:
-        if array[j] <= pivot:
+      {/* Outer card with scrollable content */}
+      <Card className="bg-gray-900 text-green-400 flex-1 border border-primary/20 overflow-y-auto">
+        <CardContent className="p-4 sm:p-6 font-mono min-h-full overflow-y-auto">
+          <pre className="whitespace-pre-wrap text-sm sm:text-base">
+{`function MergeSort(array):
+    if length(array) > 1:
+        mid = length(array) / 2
+        leftHalf = array[0...mid-1]
+        rightHalf = array[mid...end]
+
+        MergeSort(leftHalf)
+        MergeSort(rightHalf)
+
+        i = j = k = 0
+        while i < length(leftHalf) and j < length(rightHalf):
+            if leftHalf[i] <= rightHalf[j]:
+                array[k] = leftHalf[i]
+                i = i + 1
+            else:
+                array[k] = rightHalf[j]
+                j = j + 1
+            k = k + 1
+
+        while i < length(leftHalf):
+            array[k] = leftHalf[i]
             i = i + 1
-            swap array[i] and array[j]
-    swap array[i + 1] and array[high]
-    return i + 1`}
+            k = k + 1
+
+        while j < length(rightHalf):
+            array[k] = rightHalf[j]
+            j = j + 1
+            k = k + 1`}
           </pre>
         </CardContent>
       </Card>
@@ -585,31 +597,16 @@ function Partition(array, low, high):
 );
 
 
-const FlowchartSection = () => (
-  <Card className="h-full algo-card">
-    <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">QuickSort Flowchart</h1>
-      <div className="flex justify-center items-center flex-1">
-        <div className="glass-card p-8 rounded-2xl w-full h-full flex items-center justify-center min-h-[400px] border border-primary/20">
-          <div className="text-center">
-            <div className="feature-icon mx-auto mb-4">
-              <GitBranch className="w-8 h-8" />
-            </div>
-            <p className="text-center text-muted-foreground text-base sm:text-lg">
-              Flowchart visualization would be implemented here using a drawing library like D3.js or a flowchart component.
-            </p>
-          </div>
-        </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+
+
+
 
 const AdvantagesSection = () => (
   <Card className="h-full algo-card">
     <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">Advantages of QuickSort</h1>
+      <h1 className="section-title gradient-text">Advantages of Merge Sort</h1>
       <div className="grid md:grid-cols-2 gap-6 flex-1">
+        {/* Advantages */}
         <div className="space-y-4">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 text-green-600 flex items-center gap-2">
             <div className="feature-icon p-2">
@@ -620,22 +617,32 @@ const AdvantagesSection = () => (
           <ul className="space-y-3">
             <li className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
               <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">Efficient average-case time complexity: O(n log n)</span>
+              <span className="text-sm sm:text-base">
+                Consistent O(n log n) time complexity for all cases (best, average, and worst)
+              </span>
             </li>
             <li className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
               <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">In-place sorting algorithm (requires little extra memory)</span>
+              <span className="text-sm sm:text-base">
+                Stable sorting algorithm — maintains the relative order of equal elements
+              </span>
             </li>
             <li className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
               <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">Performs well for large datasets</span>
+              <span className="text-sm sm:text-base">
+                Works efficiently for large datasets and linked lists
+              </span>
             </li>
             <li className="flex items-start gap-3 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
               <Check className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">Divide-and-conquer approach simplifies complex sorting tasks</span>
+              <span className="text-sm sm:text-base">
+                Ideal for external sorting (useful when data doesn’t fit into main memory)
+              </span>
             </li>
           </ul>
         </div>
+
+        {/* Disadvantages */}
         <div className="space-y-4">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 text-red-600 flex items-center gap-2">
             <div className="feature-icon p-2 bg-red-100 dark:bg-red-900/20 text-red-600">
@@ -646,15 +653,21 @@ const AdvantagesSection = () => (
           <ul className="space-y-3">
             <li className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
               <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">Worst-case time complexity is O(n²), e.g., when array is already sorted or nearly sorted</span>
+              <span className="text-sm sm:text-base">
+                Requires extra memory space of O(n) for merging process
+              </span>
             </li>
             <li className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
               <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">Recursive calls may lead to high stack usage (can cause stack overflow on large inputs without optimization)</span>
+              <span className="text-sm sm:text-base">
+                Slower than in-place algorithms like QuickSort for smaller datasets
+              </span>
             </li>
             <li className="flex items-start gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
               <X className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-              <span className="text-sm sm:text-base">Performance depends heavily on pivot selection strategy</span>
+              <span className="text-sm sm:text-base">
+                Requires additional effort to implement in-place, making it less space-efficient
+              </span>
             </li>
           </ul>
         </div>
@@ -666,25 +679,38 @@ const AdvantagesSection = () => (
 const ExamplesSection = () => (
   <Card className="h-full algo-card">
     <CardContent className="p-4 sm:p-8 h-full flex flex-col">
-      <h1 className="section-title gradient-text">QuickSort Examples</h1>
+      <h1 className="section-title gradient-text">Merge Sort Examples</h1>
       <div className="space-y-6 flex-1 overflow-y-auto">
+        
+        {/* Example 1 */}
         <div className="glass-card p-4 sm:p-6 rounded-xl border border-primary/20">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary flex items-center gap-2">
             <div className="feature-icon p-2">
               <Target className="w-4 h-4" />
             </div>
-            Example 1: Sorting an array
+            Example 1: Sorting an unsorted array
           </h3>
-          <p className="mb-3 text-sm sm:text-base font-medium">Array: [4, 2, 7, 1, 9, 3]</p>
+          <p className="mb-3 text-sm sm:text-base font-medium">Array: [4, 2, 7, 1, 3]</p>
           <div className="bg-muted/50 p-4 rounded-lg font-mono text-xs sm:text-sm border border-primary/10">
-            <div className="text-blue-600 dark:text-blue-400">Step 1: Choose pivot (e.g., last element: 3)</div>
-            <div className="text-blue-600 dark:text-blue-400">Step 2: Partition array into [2,1] and [4,7,9]</div>
-            <div className="text-blue-600 dark:text-blue-400">Step 3: Recursively apply QuickSort to left part [2,1]</div>
-            <div className="text-blue-600 dark:text-blue-400">Step 4: Recursively apply QuickSort to right part [4,7,9]</div>
-            <div className="text-green-600 dark:text-green-400 font-semibold">Step 5: Combine partitions to get sorted array: [1,2,3,4,7,9]</div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 1: Divide the array into two halves → [4, 2] and [7, 1, 3]
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 2: Recursively divide until each subarray has one element
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 3: Merge [4] and [2] → [2, 4]; Merge [7], [1], [3] → [1, 3, 7]
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 4: Merge [2, 4] and [1, 3, 7] by comparing elements
+            </div>
+            <div className="text-green-600 dark:text-green-400 font-semibold">
+              Step 5: Final sorted array → [1, 2, 3, 4, 7]
+            </div>
           </div>
         </div>
 
+        {/* Example 2 */}
         <div className="glass-card p-4 sm:p-6 rounded-xl border border-primary/20">
           <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary flex items-center gap-2">
             <div className="feature-icon p-2">
@@ -694,57 +720,102 @@ const ExamplesSection = () => (
           </h3>
           <p className="mb-3 text-sm sm:text-base font-medium">Array: [1, 2, 3, 4, 5]</p>
           <div className="bg-muted/50 p-4 rounded-lg font-mono text-xs sm:text-sm border border-primary/10">
-            <div className="text-blue-600 dark:text-blue-400">Step 1: Choose pivot (e.g., last element: 5)</div>
-            <div className="text-blue-600 dark:text-blue-400">Step 2: Partition array — left part contains [1,2,3,4], right part empty</div>
-            <div className="text-blue-600 dark:text-blue-400">Step 3: Recursively QuickSort left part [1,2,3,4]</div>
-            <div className="text-blue-600 dark:text-blue-400">Step 4: Continue partitioning until single-element arrays reached</div>
-            <div className="text-green-600 dark:text-green-400 font-semibold">Step 5: Final sorted array remains [1,2,3,4,5]</div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 1: Divide array into halves until single elements remain
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 2: Merge subarrays in sorted order (no changes occur)
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 3: Continue merging until one sorted array forms
+            </div>
+            <div className="text-green-600 dark:text-green-400 font-semibold">
+              Step 4: Final sorted array remains [1, 2, 3, 4, 5]
+            </div>
           </div>
         </div>
+
+        {/* Example 3 */}
+        <div className="glass-card p-4 sm:p-6 rounded-xl border border-primary/20">
+          <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary flex items-center gap-2">
+            <div className="feature-icon p-2">
+              <Target className="w-4 h-4" />
+            </div>
+            Example 3: Sorting a reverse-sorted array
+          </h3>
+          <p className="mb-3 text-sm sm:text-base font-medium">Array: [9, 7, 5, 3, 1]</p>
+          <div className="bg-muted/50 p-4 rounded-lg font-mono text-xs sm:text-sm border border-primary/10">
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 1: Divide into halves → [9, 7] and [5, 3, 1]
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 2: Recursively split → [9], [7], [5], [3], [1]
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 3: Merge [9] & [7] → [7, 9]; Merge [5], [3], [1] → [1, 3, 5]
+            </div>
+            <div className="text-blue-600 dark:text-blue-400">
+              Step 4: Merge [7, 9] & [1, 3, 5] → [1, 3, 5, 7, 9]
+            </div>
+            <div className="text-green-600 dark:text-green-400 font-semibold">
+              Step 5: Final sorted array → [1, 3, 5, 7, 9]
+            </div>
+          </div>
+        </div>
+
       </div>
     </CardContent>
   </Card>
 );
 
 
+
 const TimeComplexitySection = () => (
   <Card className="h-full algo-card">
     <CardContent className="p-4 sm:p-8 h-full flex flex-col">
       <h1 className="section-title gradient-text">Time Complexity Analysis</h1>
+      
       <div className="grid md:grid-cols-3 gap-4 sm:gap-6 mb-6">
         <Card className="glass-card border border-green-200 dark:border-green-800">
           <CardContent className="p-4 sm:p-6 text-center">
             <h3 className="text-base sm:text-lg font-semibold mb-2 text-green-600">Best Case</h3>
             <div className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">O(n log n)</div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Pivot divides array evenly each time</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Array is divided evenly at every step
+            </p>
           </CardContent>
         </Card>
-        
+
         <Card className="glass-card border border-yellow-200 dark:border-yellow-800">
           <CardContent className="p-4 sm:p-6 text-center">
             <h3 className="text-base sm:text-lg font-semibold mb-2 text-yellow-600">Average Case</h3>
             <div className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">O(n log n)</div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Balanced partitions on average</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Consistent divide and merge pattern
+            </p>
           </CardContent>
         </Card>
-        
+
         <Card className="glass-card border border-red-200 dark:border-red-800">
           <CardContent className="p-4 sm:p-6 text-center">
             <h3 className="text-base sm:text-lg font-semibold mb-2 text-red-600">Worst Case</h3>
-            <div className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">O(n²)</div>
-            <p className="text-xs sm:text-sm text-muted-foreground">Pivot is smallest or largest element repeatedly</p>
+            <div className="text-2xl sm:text-3xl font-bold mb-2 gradient-text">O(n log n)</div>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Even in the worst case, merges are consistent
+            </p>
           </CardContent>
         </Card>
       </div>
-      
+
       <div className="flex-1 overflow-y-auto">
         <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary">Explanation</h3>
         <p className="text-sm sm:text-base leading-relaxed">
-          QuickSort divides the array by choosing a pivot and partitioning elements into 
-          those less than and greater than the pivot. In the best and average cases, this 
-          partitioning is balanced, leading to a time complexity of O(n log n). 
-          However, if the pivot is poorly chosen (smallest or largest element every time), 
-          QuickSort degrades to O(n²) time.
+          Merge Sort follows the divide-and-conquer approach by repeatedly dividing the array 
+          into halves until single elements remain. Each level of recursion performs a merging 
+          operation on <code>n</code> elements, and there are <code>log n</code> levels in total. 
+          Therefore, the overall time complexity for best, average, and worst cases remains 
+          <span className="text-primary font-semibold"> O(n log n)</span>. This makes Merge Sort 
+          one of the most stable and predictable sorting algorithms in terms of time complexity.
         </p>
       </div>
     </CardContent>
@@ -755,40 +826,51 @@ const SpaceComplexitySection = () => (
   <Card className="h-full algo-card">
     <CardContent className="p-4 sm:p-8 h-full flex flex-col">
       <h1 className="section-title gradient-text">Space Complexity Analysis</h1>
+
       <div className="text-center mb-6">
-        <div className="text-4xl sm:text-6xl font-bold gradient-text mb-4">O(log n)</div>
-        <p className="text-lg sm:text-xl text-primary font-semibold">Average Space Complexity</p>
+        <div className="text-4xl sm:text-6xl font-bold gradient-text mb-4">O(n)</div>
+        <p className="text-lg sm:text-xl text-primary font-semibold">Total Auxiliary Space</p>
       </div>
-      
+
       <div className="prose max-w-none flex-1 overflow-y-auto">
-        <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary">Why O(log n)?</h3>
+        <h3 className="text-lg sm:text-xl font-semibold mb-3 text-primary">Why O(n)?</h3>
         <ul className="space-y-3">
           <li className="flex items-start gap-3 p-3 rounded-lg glass-card border border-primary/20">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span className="text-sm sm:text-base">QuickSort uses recursion which requires stack space</span>
+            <span className="text-sm sm:text-base">
+              Merge Sort requires additional space to store temporary subarrays during the merge process.
+            </span>
           </li>
           <li className="flex items-start gap-3 p-3 rounded-lg glass-card border border-primary/20">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span className="text-sm sm:text-base">On average, the depth of recursion is O(log n)</span>
+            <span className="text-sm sm:text-base">
+              Each merge step needs space proportional to the number of elements being merged.
+            </span>
           </li>
           <li className="flex items-start gap-3 p-3 rounded-lg glass-card border border-primary/20">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span className="text-sm sm:text-base">Worst case recursion depth can be O(n), causing O(n) space</span>
+            <span className="text-sm sm:text-base">
+              The recursion stack also contributes O(log n) space, but it’s dominated by the O(n) merge arrays.
+            </span>
           </li>
           <li className="flex items-start gap-3 p-3 rounded-lg glass-card border border-primary/20">
             <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0"></div>
-            <span className="text-sm sm:text-base">No additional data structures needed apart from recursion stack</span>
+            <span className="text-sm sm:text-base">
+              Unlike in-place algorithms like QuickSort, Merge Sort inherently needs extra memory for merging.
+            </span>
           </li>
         </ul>
-        
+
         <p className="mt-4 text-sm sm:text-base leading-relaxed">
-          QuickSort is generally memory efficient due to its limited use of extra space, 
-          but its space use depends on the recursion stack depth.
+          Merge Sort is not an in-place sorting algorithm since it needs additional arrays to 
+          perform the merging step. While its time complexity is efficient, its space usage is 
+          relatively high, making it less suitable for memory-constrained environments.
         </p>
       </div>
     </CardContent>
   </Card>
 );
+
 
 
 
