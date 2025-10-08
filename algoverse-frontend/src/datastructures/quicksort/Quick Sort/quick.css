@@ -1,3 +1,38 @@
+.array-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.element-value {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #444;
+  color: white;
+  border-radius: 6px;
+  transition: all 0.4s ease;
+}
+
+.pivot {
+  background: purple !important;
+}
+
+.highlight {
+  background: gold !important;
+}
+
+.swapping {
+  background: red !important;
+  transform: scale(1.1);
+}
+
+.sorted {
+  background: green !important;
+}
+
 /* Container + layout */
 .visualizer-wrapper {
   display: flex;
