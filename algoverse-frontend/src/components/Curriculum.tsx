@@ -326,32 +326,32 @@ const DataStructures = () => {
         'If the end of the array is reached and the target is not found, return -1.'
       ]
     }
-    ,
-    {
-      id: 'SkipList',
-      title: 'Skip List',
-      description: 'A probabilistic data structure that allows O(log n) average time complexity for search, insertion, and deletion operations. It consists of multiple layers of sorted linked lists, where each successive list links fewer elements than the previous one, creating "express lanes".',
-      timeComplexity: 'O(log n) average',
-      spaceComplexity: 'O(n) average',
-      pseudoCode: [
-        '// Simplified Pseudocode for Search in Skip List',
-        'function search(head, target):',
-        '  current = head',
-        '  for level from max_level down to 0:',
-        '    while current.next[level] is not null and current.next[level].value < target:',
-        '      current = current.next[level]',
-        '  if current.next[0] is not null and current.next[0].value == target:',
-        '    return true',
-        '  return false',
-      ],
-      steps: [
-        'Start at the head of the highest level list.',
-        'Traverse forward in the current level until you find a node whose value is greater than or equal to the target, or you reach the end of the list.',
-        'If the next node is greater than the target, drop down one level.',
-        'Repeat steps 2 and 3 until you reach the lowest level (level 0).',
-        'At level 0, traverse forward until you find the target or pass it. If found, the search is successful.'
-      ]
-    }
+    // ,
+    // {
+    //   id: 'SkipList',
+    //   title: 'Skip List',
+    //   description: 'A probabilistic data structure that allows O(log n) average time complexity for search, insertion, and deletion operations. It consists of multiple layers of sorted linked lists, where each successive list links fewer elements than the previous one, creating "express lanes".',
+    //   timeComplexity: 'O(log n) average',
+    //   spaceComplexity: 'O(n) average',
+    //   pseudoCode: [
+    //     '// Simplified Pseudocode for Search in Skip List',
+    //     'function search(head, target):',
+    //     '  current = head',
+    //     '  for level from max_level down to 0:',
+    //     '    while current.next[level] is not null and current.next[level].value < target:',
+    //     '      current = current.next[level]',
+    //     '  if current.next[0] is not null and current.next[0].value == target:',
+    //     '    return true',
+    //     '  return false',
+    //   ],
+    //   steps: [
+    //     'Start at the head of the highest level list.',
+    //     'Traverse forward in the current level until you find a node whose value is greater than or equal to the target, or you reach the end of the list.',
+    //     'If the next node is greater than the target, drop down one level.',
+    //     'Repeat steps 2 and 3 until you reach the lowest level (level 0).',
+    //     'At level 0, traverse forward until you find the target or pass it. If found, the search is successful.'
+    //   ]
+    // }
   ];
 
   const algorithmExamples = [

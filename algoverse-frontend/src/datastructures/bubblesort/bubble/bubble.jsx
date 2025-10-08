@@ -110,10 +110,10 @@ const BubbleSortVisualizer = forwardRef(
       tickingRef.current = true;
 
       const speedUnit = Math.max(0.1, Number(playbackSpeed));
-      const T_COMPARE = 350 / speedUnit;
-      const T_SWAP = 350 / speedUnit;
-      const T_SETTLE = 220 / speedUnit;
-      const T_PASS_TRANSITION = 600 / speedUnit;
+      const T_COMPARE = 800 / speedUnit;
+      const T_SWAP = 800 / speedUnit;
+      const T_SETTLE = 600 / speedUnit;
+      const T_PASS_TRANSITION = 1500 / speedUnit;
 
       const arr = [...arrayRef.current];
       const n = arr.length;

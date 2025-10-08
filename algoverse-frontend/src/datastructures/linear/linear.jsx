@@ -79,7 +79,7 @@ const LinearSearchVisualizer = forwardRef(({
         onAnimationComplete();
         return;
       }
-
+      const BASE_DELAY = 2000;
       intervalRef.current = setInterval(() => {
         const i = stepRef.current;
         setCurrentIndex(i);
@@ -100,7 +100,7 @@ const LinearSearchVisualizer = forwardRef(({
           onAnimationComplete();
           clearInterval(intervalRef.current);
         }
-      }, 1000 / playbackSpeed);
+      }, BASE_DELAY / playbackSpeed);
 
       return () => clearInterval(intervalRef.current);
     } else {

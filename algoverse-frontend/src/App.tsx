@@ -26,6 +26,7 @@ import Jhonson from "./datastructures/johnsontrotter/Jhonson";
 import Kruskals from "./datastructures/Kruskals/Kruskals";
 import Prims from "./datastructures/Prims/Prims";
 import QuickSort from "./datastructures/quicksort/QuickSort";
+import MergeSort from "./datastructures/merge sort/MergeSort";
 import SelectionSort from "./datastructures/selectionsort/SelectionSort";
 import SkipList from "./datastructures/SkipList/SkipList";
 import Curriculum from "./components/Curriculum";
@@ -65,8 +66,8 @@ const App = () => {
             <Route path="/Kruskals" element={<Kruskals/>} />
             <Route path="/Prims" element={<Prims/>} />
             <Route path="/QuickSort" element={<QuickSort/>} />
+            <Route path="/MergeSort" element={<MergeSort/>} />
             <Route path="/SelectionSort" element={<SelectionSort/>} />
-            <Route path="/SkipList" element={<SkipList/>} />
             <Route path="/Curriculum" element={<Curriculum/>} />
             
             

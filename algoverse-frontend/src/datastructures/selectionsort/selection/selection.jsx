@@ -102,10 +102,11 @@ const SelectionSortVisualizer = forwardRef(
       if (tickingRef.current) return;
       tickingRef.current = true;
 
-      const speedFactor = Math.max(0.5, Number(playbackSpeed));
-      const T_COMPARE = 800 / speedFactor;
-      const T_SWAP = 900 / speedFactor;
-      const T_PASS = 1100 / speedFactor;
+const speedFactor = Math.max(0.5, Number(playbackSpeed));
+const T_COMPARE = 1500 / speedFactor; // slower comparison
+const T_SWAP = 1700 / speedFactor;    // slower swap
+const T_PASS = 2000 / speedFactor;    // slower transition between passes
+
 
       const arr = [...arrayRef.current];
       const n = arr.length;
